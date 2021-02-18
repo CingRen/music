@@ -2,41 +2,96 @@
     <div class="HotSongList">
         <div class="hotbg">
             <div class="hotlogo"></div>
-            <div class="hotdate">更新日期：01月15日</div>
+            <div class="hotdate">更新日期：{{updateDate|formatDate}}</div>
         </div>
-        <div><MusicItem :hotList="hotList"></MusicItem></div>
+
+        <Loading v-if="hotMusicList.length<=0"></Loading>
+        <ul>
+            <ListItem v-for="(item,k) in hotMusicList" :num="k+1" :item="item" :key="item.id">
+                <div class="right">{{k+1}}</div>
+            </ListItem>
+        </ul>
+        
+        <!-- <router-link :to="`/hot/${num+1}`">查看更多</router-link> -->
+        <button @click="loadMusic(++num)">查看更多...</button>
+        <p class="kongge"></p>
+
     </div>
 </template>
 <script>
 
-import MusicItem from '../components/MusicItem'
+import ListItem from '../components/ListItem'
+import Loading from '../components/Loading'
 
 export default {
     name:"HotSongList",
     components:{
-        MusicItem
+        ListItem,
+        Loading
     },
     data(){
         return {
-            hotList:[]
+            updateDate:new Date(),
+            hotMusicList:[],
+            num:1
+        }
+    },
+    methods:{
+        loadMusic(vmm){
+            // console.log(vmm)
+            let musicids=[];
+            // this.num++;
+            this.$http.get('/top/list?idx=1').then(data=>{//获取热榜信息
+                this.updateDate = data.playlist.updateTime;//获取更新日期
+                musicids=data.playlist.trackIds.slice(20*(vmm-1),20*vmm);
+                // console.log(vmm)
+            }).then(()=>{
+                for(let v of musicids){
+                    this.$http.get('song/detail?ids='+v.id).then((data)=>{//根据热榜里面的歌曲id获取歌曲详细信息
+                        this.hotMusicList.push({
+                            name:data.songs[0].name,
+                            id:data.songs[0].id,
+                            song:{
+                                privilege:{
+                                    maxbr:data.privileges[0].maxbr
+                                },
+                                artists:data.songs[0].ar
+                            }
+                        });
+                        // console.log(data)
+                    })
+                }
+            }).catch(error=>{
+                console.log(error)
+            });
         }
     },
     beforeRouteEnter(to,from,next){//路由守卫，在路径进入之前获取数据
     //this不可用
     next(vm=>{
-      vm.$http.get('/personalized/newsong').then(data=>{//获取最新音乐列表
-        vm.hotList=data;
-        // console.log(data)
-      });
+        vm.hotMusicList=[];
+        vm.loadMusic(vm.num);
     });
   },
+  beforeRouteUpdate(to,from,next){
+      this.loadMusic()
+      next();
+  },
+  filters:{
+      formatDate(value){
+          let d=new Date(value);
+          let month = (d.getMonth()+1);
+          let ri = (d.getDate());
+          return (month<10?"0"+month:month)+"月"+(ri <10 ? "0"+ri : ri)+"日";
+      }
+  }
 }
 </script>
 <style lang="less" scoped>
     .HotSongList{
         .hotbg{
             width: 100%;
-            height: 180px;
+            min-height: 180px;
             background-image: url(../assets/hot_music_bg_3x.jpg);
             background-size: 100% 100%;
             position: relative;
@@ -59,5 +114,11 @@ export default {
                 font-size: 10px;
             }
         }
+        .kongge{
+            height: 20px;
+        }
+    }
+    .red{
+        color: red;
     }
 </style>

@@ -9,6 +9,8 @@ import axios from "axios";
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 let config = {//axios的配置
+  // baseURL:"http://localhost:3000/"
+  // baseURL:"http://192.168.90.2:3000/"
   baseURL:"http://musicapi.leanapp.cn/"//设置请求的域名  接口版本 v1 v2
   // baseURL:"http://music.kele8.cn"//设置请求的域名  接口版本 v1 v2
   // baseURL: process.env.baseURL || process.env.apiUrl || ""
@@ -41,7 +43,7 @@ _axios.interceptors.response.use(
   function(response) {
     // Do something with response data
     // 'return response
-    return response.data.result;
+    return response.data;
   },
   function(error) {
     // Do something with response error

@@ -1,19 +1,19 @@
 <template>
-    <div>
-        <BigLogo></BigLogo>
+    <div v-show="!$route.meta.showNav">
+        <!-- <BigLogo></BigLogo> -->
         <ul class="topnav">
             <li><router-link tag="a" to="/">推荐音乐</router-link></li>
-            <li><router-link tag="a" to="/hot">热歌榜</router-link></li>
-            <li><router-link tag="a" to="/search">搜索</router-link></li>
+            <li><router-link tag="a" to="/hot/1">热歌榜</router-link></li>
+            <li><router-link tag="a" to="/search/1">搜索</router-link></li>
         </ul>
     </div>
 </template>
 <script>
-import BigLogo from '../components/BigLogo'
+// import BigLogo from '../components/BigLogo'
 export default {
     name:"TopNav",
     components:{
-        BigLogo
+        // BigLogo
     }
 }
 </script>

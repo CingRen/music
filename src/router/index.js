@@ -16,9 +16,25 @@ const routes = [
     component: () => import('../views/HotSongList.vue')
   },
   {
+    path: '/hot/:num',
+    name: 'HotSongList',
+    component: () => import('../views/HotSongList.vue')
+  },
+  {
     path: '/search',
     name: 'Search',
     component: () => import('../views/Search.vue')
+  },
+  {
+    path: '/search/:num',
+    name: 'Search',
+    component: () => import('../views/Search.vue')
+  },
+  {
+    path: '/musiclist/:musicid',
+    name: 'MusicList',
+    component: () => import('../views/MusicList.vue'),
+    meta:{showNav:true}
   }
 ]
 
